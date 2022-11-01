@@ -1,17 +1,13 @@
-from cgi import test
-from gzip import open as gopen
+from numpy import mean
 from pickle import dump, load
-from numpy import array, mean
+from gzip import open as gopen
 
 from layer import Layer
 from lib import reshape_input, random_partion, decide
-from cost_functions import MeanSquaredError
 
 
 class NeuralNetwork:
-
     def __init__(self, layers, activation='sigmoid', cost='mse'):
-
         if isinstance(layers[0], Layer):
             self.layers = layers
         else:
@@ -29,7 +25,6 @@ class NeuralNetwork:
         self.size = sum(self.shape)
 
     def classify(self, data, decisive=False):
-
         data = reshape_input(data, self.layers[0].size)
         for layer in self.layers[:-1]:
             data = layer.forward(data, decisive=False)
@@ -37,7 +32,6 @@ class NeuralNetwork:
         return self.layers[-1].forward(data, decisive=decisive)
 
     def _backward(self, y, data=None):
-
         y = reshape_input(y, self.layers[-1].size)
         if data is not None:
             # without data backpropagate last classification (results cached in layers)
@@ -46,7 +40,6 @@ class NeuralNetwork:
         return self.layers[0].backward(y)
 
     def train(self, data, y, epochs=1, batch_size=1, eta=1, test_data=None, decisive=False):
-
         for i in range(epochs):
             partitions, partitions_y = random_partion(data, batch_size, y=y)
 
@@ -66,18 +59,15 @@ class NeuralNetwork:
                     print(f'{i + 1}/{epochs} : {mean(outcome):.3f}')
 
     def _update_network(self, deltas, eta):
-
         for layer, delta in zip(self.layers[1:], deltas):
             layer.update(delta, eta)
 
     def save(self, path='./network'):
-
         with gopen(path, 'wb') as f:
             dump(self, f)
 
     @ staticmethod
     def load(path='./network'):
-
         with gopen(path, 'rb') as f:
             return load(f)
 
