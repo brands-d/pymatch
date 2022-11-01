@@ -2,11 +2,16 @@ from numpy import nansum as nsum
 
 
 class CostFunction:
-    pass
+    @staticmethod
+    def f(data):
+        return data
+
+    @staticmethod
+    def nabla(data):
+        return data
 
 
 class MeanSquaredError(CostFunction):
-
     @staticmethod
     def f(a, y):
         return nsum((y-a)**2, axis=0) / 2

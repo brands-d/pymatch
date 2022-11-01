@@ -8,7 +8,8 @@ from cost_functions import MeanSquaredError
 
 
 class Layer:
-    def __init__(self, size, next_=None, prev=None, initial='gaussian', activation='sigmoid', cost='mse'):
+    def __init__(self, size, next_=None, prev=None, initial='gaussian',
+                 activation='sigmoid', cost='mse'):
         self.size = size
         self.next = next_
         self.prev = prev
@@ -74,6 +75,8 @@ class Layer:
             if self.prev is None:
                 output = f'Layer({self.size})'
             else:
-                output = f'Layer({self.size})\nb = {array2string(self.bias, prefix="b = ")}\nw = {array2string(self.weight, prefix="w = ")}'
+                output = (f'Layer({self.size})\nb = '
+                          f'{array2string(self.bias, prefix="b = ")}'
+                          f'\nw = {array2string(self.weight, prefix="w = ")}')
 
         return output

@@ -1,22 +1,22 @@
 from numpy import exp
 
-class ActivationFunction:
 
+class ActivationFunction:
     @staticmethod
     def f(data):
-        pass
+        return data
 
     @staticmethod
     def f_prime(data):
-        pass
+        return data
 
 
 class Sigmoid(ActivationFunction):
-
     @staticmethod
     def f(z):
         return 1/(1 + exp(-z))
 
     @staticmethod
     def f_prime(z):
-        return Sigmoid.f(z)*(1-Sigmoid.f(z))
+        s_z = Sigmoid.f(z)
+        return s_z*(1-s_z)

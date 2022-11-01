@@ -7,19 +7,24 @@ from lib import reshape_input, random_partion, decide
 
 
 class NeuralNetwork:
+
     def __init__(self, layers, activation='sigmoid', cost='mse'):
+
         if isinstance(layers[0], Layer):
+            # layers is already list of 'Layer'
             self.layers = layers
+
         else:
-            self.layers = [
-                Layer(layers[0], activation=activation, cost=cost), ]
+            # init doubly linked list of 'Layer' with sizes from 'layers'
+            self.layers = [Layer(layers[0],
+                                 activation=activation, cost=cost), ]
             prev = self.layers[0]
+
             for size in layers[1:]:
                 self.layers += [Layer(size, prev=prev,
                                       activation=activation, cost=cost), ]
                 self.layers[-2].next = self.layers[-1]
                 prev = self.layers[-1]
-            self.layers = tuple(self.layers)
 
         self.shape = tuple(layer.size for layer in self.layers)
         self.size = sum(self.shape)
@@ -34,12 +39,14 @@ class NeuralNetwork:
     def _backward(self, y, data=None):
         y = reshape_input(y, self.layers[-1].size)
         if data is not None:
-            # without data backpropagate last classification (results cached in layers)
+            # without data backpropagate last
+            # classification (results cached in layers)
             self.classify(data)
 
         return self.layers[0].backward(y)
 
-    def train(self, data, y, epochs=1, batch_size=1, eta=1, test_data=None, decisive=False):
+    def train(self, data, y, epochs=1, batch_size=1, eta=1,
+              test_data=None, decisive=False):
         for i in range(epochs):
             partitions, partitions_y = random_partion(data, batch_size, y=y)
 
@@ -71,5 +78,8 @@ class NeuralNetwork:
         with gopen(path, 'rb') as f:
             return load(f)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'NeuralNetwork({self.shape})'
+
+    def __len__(self):
+        return len(self.layers)

@@ -1,13 +1,6 @@
+from math import sqrt
 from numpy.random import default_rng
-from numpy import exp, array, newaxis, argmax
-
-
-def sigmoid(z):
-    return 1/(1 + exp(-z))
-
-
-def sigmoid_prime(z):
-    return sigmoid(z)*(1-sigmoid(z))
+from numpy import array, newaxis, argmax, reshape
 
 
 def reshape_input(data, layer_size=None):
@@ -37,4 +30,18 @@ def random_partion(data, size, y=None):
 
 
 def decide(data):
-    return argmax(data, axis=0)[:]
+    return argmax(data, axis=0)
+
+
+def plot_digit_data(data, i=None):
+    from matplotlib.pyplot import imshow, show
+
+    size = int(sqrt(len(data[0])))
+    if i is not None:
+        imshow(reshape(data[0][:, i], (size, size)))
+        print(decide(data[1][:, i]))
+
+    else:
+        imshow(reshape(data[0], (size, size)))
+        print(decide(data[1]))
+    show()
