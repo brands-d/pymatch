@@ -1,3 +1,4 @@
+import time
 from math import sqrt
 from numpy.random import default_rng
 from numpy import array, newaxis, argmax, reshape
@@ -45,3 +46,16 @@ def plot_digit_data(data, i=None):
         imshow(reshape(data[0], (size, size)))
         print(decide(data[1]))
     show()
+
+
+def timeit(f):
+    def timeit_wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = f(*args, **kwargs)
+        end_time = time.perf_counter()
+        total_time = end_time - start_time
+        print(f'{f.__name__} took {total_time:.1f} s')
+
+        return result
+
+    return timeit_wrapper

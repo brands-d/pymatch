@@ -4,11 +4,13 @@ from numpy import exp
 class ActivationFunction:
     @staticmethod
     def f(data):
-        return data
+        raise NotImplementedError('This is an abstract class defining'
+                                  'cost functions. Please use a subclass.')
 
     @staticmethod
     def f_prime(data):
-        return data
+        raise NotImplementedError('This is an abstract class defining'
+                                  'cost functions. Please use a subclass.')
 
 
 class Sigmoid(ActivationFunction):

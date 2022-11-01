@@ -4,7 +4,7 @@ from numpy import dot, multiply, einsum, printoptions, array2string
 
 from lib import decide
 from activation_functions import Sigmoid
-from cost_functions import MeanSquaredError
+from cost_functions import MeanSquaredError, CostEntropy
 
 
 class Layer:
@@ -23,6 +23,8 @@ class Layer:
 
         if cost == 'mse':
             self.cost_func = MeanSquaredError
+        elif cost == 'entropy':
+            self.cost_func = CostEntropy
         else:
             raise NotImplementedError
 

@@ -3,7 +3,7 @@ from pickle import dump, load
 from gzip import open as gopen
 
 from layer import Layer
-from lib import reshape_input, random_partion, decide
+from lib import reshape_input, random_partion, decide, timeit
 
 
 class NeuralNetwork:
@@ -45,6 +45,7 @@ class NeuralNetwork:
 
         return self.layers[0].backward(y)
 
+    @timeit
     def train(self, data, y, epochs=1, batch_size=1, eta=1,
               test_data=None, decisive=False):
         for i in range(epochs):
