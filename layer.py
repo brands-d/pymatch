@@ -3,8 +3,8 @@ from numpy.random import standard_normal
 from numpy import dot, multiply, einsum, printoptions, array2string
 
 from lib import decide
-from activation_functions import Sigmoid
-from cost_functions import MeanSquaredError, CostEntropy
+from activation_functions import Sigmoid, Softmax
+from cost_functions import MeanSquaredError, CostEntropy, LogLikelihood
 
 
 class Layer:
@@ -18,6 +18,8 @@ class Layer:
 
         if activation == 'sigmoid':
             self.act_func = Sigmoid
+        elif activation == 'softmax':
+            self.act_func = Softmax
         else:
             raise NotImplementedError
 
@@ -25,6 +27,8 @@ class Layer:
             self.cost_func = MeanSquaredError
         elif cost == 'entropy':
             self.cost_func = CostEntropy
+        elif cost == 'loglikelihood':
+            self.cost_func = LogLikelihood
         else:
             raise NotImplementedError
 
@@ -67,8 +71,10 @@ class Layer:
 
         return [delta, ] + deltas
 
-    def update(self, delta, eta=1):
+    def update(self, delta, eta=1, reg=None):
         scaling = eta / len(delta[0, :])
+        if reg is not None:
+            self.weight *= 1-eta*reg/len(delta[0, :])
         self.weight -= scaling * einsum('kl,jl->kj', delta, self.prev._a_cache)
         self.bias -= scaling * nsum(delta, axis=1, keepdims=True)
 

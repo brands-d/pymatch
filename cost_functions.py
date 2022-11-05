@@ -1,4 +1,4 @@
-from numpy import mean
+from numpy import mean, zeros
 from numpy import log as ln
 from numpy import nansum as nsum
 
@@ -33,3 +33,15 @@ class CostEntropy(CostFunction):
     @staticmethod
     def nabla(a, y):
         return (-y/a+(1-y)/(1-a))/len(a)
+
+
+class LogLikelihood(CostFunction):
+    @staticmethod
+    def f(a, y):
+        return -ln(a[int(y)])
+
+    @staticmethod
+    def nabla(a, y):
+        out = zeros(a.shape)
+        out[y, range(len(y))] = -1/a
+        return out

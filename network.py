@@ -8,7 +8,7 @@ from lib import reshape_input, random_partion, decide, timeit
 
 class NeuralNetwork:
 
-    def __init__(self, layers, activation='sigmoid', cost='mse'):
+    def __init__(self, layers, activation='sigmoid', cost='mse', prob=False):
 
         if isinstance(layers[0], Layer):
             # layers is already list of 'Layer'
@@ -20,9 +20,14 @@ class NeuralNetwork:
                                  activation=activation, cost=cost), ]
             prev = self.layers[0]
 
-            for size in layers[1:]:
-                self.layers += [Layer(size, prev=prev,
-                                      activation=activation, cost=cost), ]
+            for i, size in enumerate(layers[1:]):
+                # last layer
+                if prob and i == len(layers) - 2:
+                    self.layers += [Layer(size, prev=prev,
+                                          activation='softmax', cost=cost), ]
+                else:
+                    self.layers += [Layer(size, prev=prev,
+                                          activation=activation, cost=cost), ]
                 self.layers[-2].next = self.layers[-1]
                 prev = self.layers[-1]
 
@@ -47,13 +52,13 @@ class NeuralNetwork:
 
     @timeit
     def train(self, data, y, epochs=1, batch_size=1, eta=1,
-              test_data=None, decisive=False):
+              test_data=None, decisive=False, regularize=None):
         for i in range(epochs):
             partitions, partitions_y = random_partion(data, batch_size, y=y)
 
             for partition, partition_y in zip(partitions, partitions_y):
                 deltas = self._backward(partition_y, data=partition)
-                self._update_network(deltas, eta=eta)
+                self._update_network(deltas, eta=eta, reg=regularize)
 
             if test_data is not None:
                 is_ = self.classify(test_data[0], decisive=decisive)
@@ -66,9 +71,9 @@ class NeuralNetwork:
                     outcome = self.layers[-1].cost_func.f(is_, should)
                     print(f'{i + 1}/{epochs} : {mean(outcome):.3f}')
 
-    def _update_network(self, deltas, eta):
+    def _update_network(self, deltas, eta, reg):
         for layer, delta in zip(self.layers[1:], deltas):
-            layer.update(delta, eta)
+            layer.update(delta, eta, reg)
 
     def save(self, path='./network'):
         with gopen(path, 'wb') as f:
